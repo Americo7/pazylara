@@ -1,3 +1,4 @@
+
 # pazylara
 
 Ejemplo de configuración de Terraform para desplegar cuatro máquinas virtuales en OpenStack.
@@ -30,3 +31,6 @@ terraform validate
 ```bash
 terraform apply
 ```
+=======
+# AMERICO GEY
+
