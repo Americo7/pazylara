@@ -1,0 +1,64 @@
+#cloud-config
+
+chpasswd:
+  list: |
+    root:*qwerty*
+    admin:*qwerty*
+  expire: False
+
+
+write_files:
+  - path: /etc/sudoers.d/admin
+    content: |
+      admin ALL=(ALL) NOPASSWD: ALL
+    owner: root:root
+    permissions: '0440'
+# Configuración de usuarios
+users:
+  - name: bhuanca
+    groups: sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDaybrbn5l3eOhc9FI36iF4UONEbacge2X6awKFJ18dsOW/h9THF7gGUtzdlGa2dx7rLPI/fZk0q2bxbT1HYj/WAvOGciqdzxgFP8a3dw6+onBykvALy+HIVzsvn8mEiA45ie0CEhDhiHPHFYdiERIaUEn6G/3rwg6kFc9SrXI3sQFjAVmzWuJP+rSH4Lu9sZ2fcTn+Thr2fhKHzpP5/d88fl8lXRzIC/i5NhJ17fwbcVjMyAX8xqCl4tadC9DEHLtIbTgxXB8XmfXMhKudmr3NvhVMwh6RPSlPgiS/zHoudqysozUSaSsIhTiRQ6wkIwhIq8DDlG27B7Qz9vESdhnki4mNOjLxRJjfFp3dUc0xChBzRpRcswv9ucoyX42bk6EaEGZiU5wI43rhG+KnkH3fJ8nQQcdigiGTF/PomNrQCZBJuo5Zi1jF/96V2LNbMRi8KKqQG6m5Nu3MlWj4EUsCtdLEf134wnfA3l51OTXFE2u32ZTORWCWBwuaJiUAKm0= bhuanca@pc-uit2024
+
+  - name: jasfro
+    groups: sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCg2POJseXfMdJ+3V6+tJ04EoV/QYl8U3BarVMP4eplEkKeHHpuoepPccJzJjVmsMEP1hi4ccm1P8bmwOzgP17XVNH9ahFxlJOZ17VYPxb3v/s2TjiPP4pJYntIbqKKuPbJpDpxOtXWzHIjr2thgjzSs+a2UT5CYGULHnL4KczGFaU3mQMVrd26418rq8HhY3UMwVZd0tT3t7XuYpNewrnvTTIS/GqOtkyveM+HZN5VFcBguuVA5SY/IIFsnSMi0xl05ffVvnZzn3xcrHQUfY0Pp/gE+wzIpDz7zZ6oXK7Pem4urwPc1I9vtfIsdHoizT79RtrIaYKpqprtK+hRPajIrI8MOtg7Mwp476eHskujLQD6OzO9Zxbhh1J7wzgU/QKQvT//X2OFTAy+ZYRn9B6sP1jKAKYgtAEb4Q/C2z6barGnXhs8+roDZ10aANJgyCVqy4XJny3AkLggstWl5JrScX3o0pUh3VGFkeboMGV1mcFBEuoCbhvG6LqjpZkl2OaNnbFWOCH1Ayl1oqntyNzzItdvK6cdTvxJ0gnSPgZvFFH8GlQ4MyxzSSS+5gyRfM8WFJwuLCX/UwhugRIadqN1Fk8lLd4mFLtGvnK1TyKBvFTZ1tnY+Njmps7yWuhdVXVf1lsCdQ+vRGknUhTXVu2Y2ug+EM60GA01hpPadmo7rQ== jasfro@pgavrcf
+
+  - name: ruruchi
+    groups: sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDRLEfznYIne6AYlbhEUit9mxvnv7ynhiz6dSr0G2Gc3sq4oLud4yKTUaQKCqxjwM17uj++WP7wlJjg/oTouvusmyu11tzY25bD1t2rQRWkttRI3GUAviGfewF+NdRSRhi7foSnCXoqXzXqnURE5WMwHwtL6XwzAk/mgBjnB9a7G04L619T3Vuzu+LhupPHTf5mFr1cxy97uEaWi/CttXXQ0qSqS5XlmLxsWvBg+FcQrIMfNvqveIqJhinZmKZcn3XSHOqwDPTmqTHPKkmEXLb7ugKGkJrfECFtA1ph1vC5vNywviGX4kNTPzI0eJLomeEAYq39S8YMIry8akU1DqwspeySmdpjvTb32/euhac3+kSH1d1w5K3kGDJYYte36UpEKBaKONqLJSb0xRTPbweEgSIdzBufOuef547Da064SJ9j/WFeA/eCbXfEp8RhK+d32U0v97U7O8Fh+OWiL34dM4v0zkIzUpcfPFlzdJ0JV44ikom12Qb9ZLpBP2zDbFk= ruruchi@ruruchi
+
+  - name: rchavez
+    groups: sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCwJjazuNFuHiV4d6Wgx2klcUpJs+O6Dtghqp25i7a25Q+22iRKQ0HeRNOGxRO1Pvb0zrhUzckM3tBb+znZ3EwLrXnGyGxnqyQeJeKTAlDcOb7vxinlov2YhpD/XQGiB21Gn9FAdAhVRiJbat8ZJFBmnmObGHK0rSvttKofFxdK9ERqmOR7fqlZCawLjACl0yXJLWqbePmk7IFv5Rw8v9y7dYp9Xsr+svT4WhINx3HRuyw0Qc0TOlqDT4BvMJ7oobVVAWYfGDaTbz22rAD2ttAHRuMc92cCeJSKa2MuTeKOhXI1+kdoVykjB9cfyVAQvt5ksA+M4e60jV1iGoPGoyDq16lUYpxh4gqWWFgJgj8EaCE1dGOJhPJsXN4fZpTteSBvy0+vo0Rtwgmk/2mzv/wV/e6R3nI5wW1dp/h/FcYOQl1dOEdvWVKBTJS8TnRG6KlTlEnHnNS52jIcoJkrKXNtJtlVogAnmAACtLTkRihmrHqbOnFRXEnPf+U1I4CMzpk= rchavez@rchavez
+
+# Configuración SSH
+ssh_pwauth: false
+disable_root: false
+
+# Actualización del sistema
+package_update: true
+package_upgrade: true
+
+# Paquetes básicos a instalar
+packages:
+  - curl
+  - wget
+  - htop
+  - git
+  - unzip
+  - apt-transport-https
+  - ca-certificates
+  - gnupg
+  - lsb-release
