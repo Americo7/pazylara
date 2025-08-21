@@ -28,12 +28,14 @@ locals {
   ])
 
   vm_instances_map = { for inst in local.vm_instances : inst.key => inst }
+
 }
 
 resource "openstack_networking_network_v2" "network" {
   name           = var.network.name
   admin_state_up = true
 }
+
 
 resource "openstack_networking_subnet_v2" "subnet" {
   name            = var.network.subnet_name
@@ -68,8 +70,9 @@ resource "openstack_compute_flavor_v2" "flavor" {
   is_public = true
 }
 
-data "openstack_images_image_v2" "debian12" {
-  name        = "Debian-12-Generic"
+
+data "openstack_images_image_v2" "image" {
+  name        = var.image_name
   most_recent = true
 }
 
@@ -112,42 +115,25 @@ resource "openstack_networking_secgroup_rule_v2" "udp_ipv4_any_from_allowed" {
   port_range_max    = 65535
   remote_ip_prefix  = format("%s/32", local.allowed_ips[count.index])
   security_group_id = openstack_networking_secgroup_v2.secgroup.id
+
 }
 
-resource "openstack_networking_secgroup_rule_v2" "http" {
-  direction         = "ingress"
-  ethertype         = "IPv4"
-  protocol          = "tcp"
-  port_range_min    = 80
-  port_range_max    = 80
-  remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = openstack_networking_secgroup_v2.secgroup.id
-}
+resource "openstack_networking_secgroup_rule_v2" "custom" {
+  for_each = var.security_group_rules
 
-resource "openstack_networking_secgroup_rule_v2" "https" {
-  direction         = "ingress"
-  ethertype         = "IPv4"
-  protocol          = "tcp"
-  port_range_min    = 443
-  port_range_max    = 443
-  remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = openstack_networking_secgroup_v2.secgroup.id
-}
-
-resource "openstack_networking_secgroup_rule_v2" "wireguard_any" {
-  direction         = "ingress"
-  ethertype         = "IPv4"
-  protocol          = "udp"
-  port_range_min    = 51820
-  port_range_max    = 51820
-  remote_ip_prefix  = "0.0.0.0/0"
+  direction         = each.value.direction
+  ethertype         = each.value.ethertype
+  protocol          = each.value.protocol
+  port_range_min    = each.value.port_range_min
+  port_range_max    = each.value.port_range_max
+  remote_ip_prefix  = each.value.remote_ip_prefix
   security_group_id = openstack_networking_secgroup_v2.secgroup.id
 }
 
 resource "openstack_compute_instance_v2" "vm" {
   for_each        = local.vm_instances_map
   name            = each.value.name
-  image_id        = data.openstack_images_image_v2.debian12.id
+  image_id        = data.openstack_images_image_v2.image.id
   flavor_id       = openstack_compute_flavor_v2.flavor[each.value.group].id
   key_pair        = null
   security_groups = [openstack_networking_secgroup_v2.secgroup.name]
@@ -167,6 +153,7 @@ resource "openstack_networking_floatingip_v2" "fip" {
   pool    = var.external_network_name
   address = each.value.floating_ip
 }
+
 
 resource "openstack_compute_floatingip_associate_v2" "fip_assoc" {
   for_each = openstack_networking_floatingip_v2.fip

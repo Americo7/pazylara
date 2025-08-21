@@ -20,6 +20,14 @@ variable "external_network_name" {
   description = "Nombre de la red externa para IPs flotantes"
   type        = string
   default     = "red_externa_01"
+
+}
+
+variable "image_name" {
+  description = "Nombre de la imagen base para las instancias"
+  type        = string
+  default     = "Debian-12-Generic"
+
 }
 
 variable "users" {
@@ -80,3 +88,43 @@ variable "vm_groups" {
     }
   }
 }
+
+
+variable "security_group_rules" {
+  description = "Reglas adicionales para el grupo de seguridad"
+  type = map(object({
+    direction        = string
+    ethertype        = string
+    protocol         = string
+    port_range_min   = number
+    port_range_max   = number
+    remote_ip_prefix = string
+  }))
+  default = {
+    http = {
+      direction        = "ingress"
+      ethertype        = "IPv4"
+      protocol         = "tcp"
+      port_range_min   = 80
+      port_range_max   = 80
+      remote_ip_prefix = "0.0.0.0/0"
+    }
+    https = {
+      direction        = "ingress"
+      ethertype        = "IPv4"
+      protocol         = "tcp"
+      port_range_min   = 443
+      port_range_max   = 443
+      remote_ip_prefix = "0.0.0.0/0"
+    }
+    wireguard = {
+      direction        = "ingress"
+      ethertype        = "IPv4"
+      protocol         = "udp"
+      port_range_min   = 51820
+      port_range_max   = 51820
+      remote_ip_prefix = "0.0.0.0/0"
+    }
+  }
+}
+
