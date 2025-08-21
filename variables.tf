@@ -1,72 +1,82 @@
-variable "allowed_ips" {
-  description = "Lista de IPs permitidas para acceder a las máquinas virtuales"
-  type        = list(string)
-  default = [
-    "192.168.24.74",
-    "192.168.24.89",
-    "192.168.24.68",
-    "192.168.24.29"
-  ]
-}
-
-variable "floating_ips" {
-  description = "IPs flotantes específicas para asignar a las VMs (vacío = sin IP flotante)"
+variable "network" {
+  description = "Configuración de la red interna y el router"
   type = object({
-    ctfd           = list(string)
-    web_challenges = list(string)
-    vpn           = string
+    name        = string
+    subnet_name = string
+    router_name = string
+    cidr        = string
+    dns_servers = list(string)
   })
   default = {
-    ctfd = [
-      "10.188.105.131",  # CTFD VM 1 - sin IP flotante
-      "10.188.105.132"   # CTFD VM 2 - sin IP flotante
-    ]
-    web_challenges = [
-      "10.188.105.133",  # Web Challenges VM 1 - sin IP flotante
-      "10.188.105.134"   # Web Challenges VM 2 - sin IP flotante
-    ]
-    vpn = "10.188.105.100"  # VPN VM - con IP flotante
+    name        = "ctfd-network"
+    subnet_name = "ctfd-subnet"
+    router_name = "ctfd-router"
+    cidr        = "10.0.1.0/24"
+    dns_servers = ["8.8.8.8", "8.8.4.4"]
   }
 }
 
-variable "private_ips" {
-  description = "IPs privadas específicas para las VMs en la red interna"
-  type = object({
-    ctfd           = list(string)
-    web_challenges = list(string)
-    vpn           = string
-  })
-  default = {
-    ctfd = [
-      "10.0.1.11",  # CTFD VM 1
-      "10.0.1.12"   # CTFD VM 2
-    ]
-    web_challenges = [
-      "10.0.1.13",  # Web Challenges VM 1
-      "10.0.1.14"   # Web Challenges VM 2
-    ]
-    vpn = "10.0.1.15"  # VPN VM
-  }
+variable "external_network_name" {
+  description = "Nombre de la red externa para IPs flotantes"
+  type        = string
+  default     = "red_externa_01"
 }
 
 variable "users" {
-  description = "Usuarios que tendrán acceso a las VMs"
+  description = "Usuarios que tendrán acceso a las VMs (se derivan las IPs permitidas)"
   type = map(object({
     name = string
     ip   = string
   }))
   default = {
-    "franz" = {
+    franz = {
       name = "Franz Rojas"
       ip   = "192.168.24.74"
     }
-    "rodrigo" = {
+    rodrigo = {
       name = "Rodrigo Uruchi"
       ip   = "192.168.24.89"
     }
-    "ricardo" = {
+    ricardo = {
       name = "Ricardo Chavez"
       ip   = "192.168.24.68"
+    }
+  }
+}
+
+variable "vm_groups" {
+  description = "Configuración de VMs agrupadas por entorno"
+  type = map(object({
+    flavor = object({
+      ram   = number
+      vcpus = number
+      disk  = number
+    })
+    instances = map(object({
+      private_ip  = string
+      floating_ip = string
+    }))
+  }))
+  default = {
+    ctfd = {
+      flavor = { ram = 6144, vcpus = 6, disk = 50 }
+      instances = {
+        "1" = { private_ip = "10.0.1.11", floating_ip = "" }
+        "2" = { private_ip = "10.0.1.12", floating_ip = "" }
+      }
+    }
+    web = {
+      flavor = { ram = 8192, vcpus = 10, disk = 50 }
+      instances = {
+        "1" = { private_ip = "10.0.1.13", floating_ip = "" }
+        "2" = { private_ip = "10.0.1.14", floating_ip = "" }
+      }
+    }
+    vpn = {
+      flavor = { ram = 8192, vcpus = 8, disk = 30 }
+      instances = {
+        "1" = { private_ip = "10.0.1.15", floating_ip = "10.188.105.100" }
+      }
     }
   }
 }
