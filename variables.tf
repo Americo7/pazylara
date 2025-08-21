@@ -20,12 +20,14 @@ variable "external_network_name" {
   description = "Nombre de la red externa para IPs flotantes"
   type        = string
   default     = "red_externa_01"
+
 }
 
 variable "image_name" {
   description = "Nombre de la imagen base para las instancias"
   type        = string
   default     = "Debian-12-Generic"
+
 }
 
 variable "users" {
@@ -87,6 +89,7 @@ variable "vm_groups" {
   }
 }
 
+
 variable "security_group_rules" {
   description = "Reglas adicionales para el grupo de seguridad"
   type = map(object({
@@ -124,3 +127,4 @@ variable "security_group_rules" {
     }
   }
 }
+

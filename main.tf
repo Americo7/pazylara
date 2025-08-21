@@ -28,12 +28,14 @@ locals {
   ])
 
   vm_instances_map = { for inst in local.vm_instances : inst.key => inst }
+
 }
 
 resource "openstack_networking_network_v2" "network" {
   name           = var.network.name
   admin_state_up = true
 }
+
 
 resource "openstack_networking_subnet_v2" "subnet" {
   name            = var.network.subnet_name
@@ -67,6 +69,7 @@ resource "openstack_compute_flavor_v2" "flavor" {
   disk      = each.value.flavor.disk
   is_public = true
 }
+
 
 data "openstack_images_image_v2" "image" {
   name        = var.image_name
@@ -112,6 +115,7 @@ resource "openstack_networking_secgroup_rule_v2" "udp_ipv4_any_from_allowed" {
   port_range_max    = 65535
   remote_ip_prefix  = format("%s/32", local.allowed_ips[count.index])
   security_group_id = openstack_networking_secgroup_v2.secgroup.id
+
 }
 
 resource "openstack_networking_secgroup_rule_v2" "custom" {
@@ -149,6 +153,7 @@ resource "openstack_networking_floatingip_v2" "fip" {
   pool    = var.external_network_name
   address = each.value.floating_ip
 }
+
 
 resource "openstack_compute_floatingip_associate_v2" "fip_assoc" {
   for_each = openstack_networking_floatingip_v2.fip
